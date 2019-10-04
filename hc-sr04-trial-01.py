@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import RPi.GPIO as GPIO
 import time
+import os
 
 def get_distance():
     print ("Calculating distance")
@@ -38,8 +39,10 @@ try:
       while True:
           if (GPIO.input(PIR) == 1):
               print("motion detected")
-          else:
-              print("")
+#              os.system('fswebcam -r 640x480 -S 10 --jpeg 70  −−set brightness=100%  --save /home/pi/Desktop/pic/%H%M%S.jpg')
+              
+#          else:
+#              print("")
 ##              measured = get_distance()
 ##              timeArray.append(measured)
               
