@@ -60,6 +60,7 @@ try:
                   distanceArray.append(distance)
               
               get_direction(distanceArray)
+              time.sleep(1)
 except KeyboardInterrupt:
     GPIO.cleanup()
 
