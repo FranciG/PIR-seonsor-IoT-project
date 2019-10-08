@@ -1,0 +1,29 @@
+<html>
+    {% block head %}
+    <head>
+            {% block head1 %}
+            {%endblock%}
+            {% block head2 %}
+            {%endblock%}
+            {% block head3 %}
+            {%endblock%}
+    </head>
+    {% endblock %}
+    {% block nav %}
+    <ul id="nav">
+        <li>{% block nav-index %}<a href="{% url 'index' %}">Home</a>{% endblock %}</li>
+        <li>{% block nav-data %}<a href="{% url 'data' %}">Data</a>{% endblock %}</li>
+        <li>{% block nav-stream %}<a href="{% url 'stream' %}">Stream</a>{% endblock %}</li>
+    </ul>
+    {% endblock %}
+
+    {% block body %}
+    <body>
+            {% block body1 %}
+            {%endblock%}
+            {% block body2 %}
+            {%endblock%}
+            {% block body3 %}
+            {%endblock%}
+    {% endblock %}
+    

@@ -1,0 +1,23 @@
+{% extends "./base/head.html" %}
+
+
+
+{% block nav-home %}<strong class="nav-active">Home</strong>{% endblock %}
+
+{% block body1 %}
+
+Home View
+
+{% if data %}
+    <ul>
+    {% for item in data %}
+        <li>{{ item.passed }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No data available.</p>
+{% endif %}
+
+{% endblock %}
+
+{% include "./base/footer.html" %}

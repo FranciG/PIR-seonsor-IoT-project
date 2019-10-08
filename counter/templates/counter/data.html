@@ -1,0 +1,16 @@
+
+
+{% extends "./base/head.html" %}
+
+
+
+{% block nav-data %}<strong class="nav-active">Data </strong>{% endblock %}
+
+
+{% include "./base/footer.html" %}
+
+{% block body1 %}
+Data view
+
+<a href="{% url 'ex' %}">Example</a>
+{% endblock %}
