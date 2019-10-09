@@ -7,3 +7,4 @@ class Counter(models.Model):
     passed = models.IntegerField('passed')
     class Meta:
         db_table = 'counter'
+        managed = False

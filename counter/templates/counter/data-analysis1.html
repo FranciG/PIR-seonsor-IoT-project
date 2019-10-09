@@ -1,0 +1,17 @@
+
+
+{% extends "./base/head.html" %}
+
+{% include "./base/footer.html" %}
+
+{% block body1 %}
+{% if div %}
+{{div|safe}}
+{% endif %}
+{% endblock %}
+{% block body2%}
+{% if test %}
+value comes here
+{{test|safe}}
+{% endif %}
+{% endblock %}
