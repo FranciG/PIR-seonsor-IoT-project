@@ -33,21 +33,19 @@ class DataView():
 
         data = list(Counter.objects.all().values())
 
-
         df = pd.DataFrame(data)
 
         df.record=pd.to_datetime(df.record)
         timeData = df.groupby([pd.Grouper(key='record',freq='H'), df.passed]).size().reset_index(name='count')
 
-
-        df = pd.DataFrame(data)
+        test = df
         y = timeData["count"]
         x = timeData["record"]
 
         plot = figure(title="basic", x_axis_label="x",x_axis_type="datetime", y_axis_label="y",plot_width=400,plot_height=400)
         plot.line(x,y,line_width=2)
         script,div = components(plot)
-        return render_to_response(template_name,{'script':script, 'div':div})
+        return render_to_response(template_name,{'script':script, 'div':div, 'test':test})
 
     def get_data():
         data = list(Counter.objects.all().values())
