@@ -6,18 +6,20 @@
 
 {% block body1 %}
 
-Home View
+<h3>IoT project campus cafeteria people counter</h3>
 
-{% if data %}
-    <ul>
-    {% for item in data %}
-        <li>{{ item.passed }}</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No data available.</p>
-{% endif %}
 
 {% endblock %}
+
+{% block body2 %}
+
+Current Web of Kotkanpoika<br>
+Opening hours Kotkanpoika open<br>
+mon - thu  8.45 - 14.30, fri 8.45 - 13.00<br>
+<img style="-webkit-user-select: none;margin: auto;" src="http://172.20.248.146:8081/" width="477" height="357">
+
+
+{% endblock %}
+
 
 {% include "./base/footer.html" %}

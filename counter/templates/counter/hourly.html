@@ -3,7 +3,9 @@
 {% extends "./base/head.html" %}
 
 
-
+{% if script == False %}
+    {% block head-bokeh %} <title>script false</title> {% endblock %}
+{% endif %}
 {% block nav-data %}<strong class="nav-active"> Data analysis basics </strong>{% endblock %}
 
 
@@ -16,6 +18,13 @@ Data Analysis
 <br>
 <a href="{% url 'hourly' %}">Hourly</a>
 <br>
+{% if dates%}
+        <ul>
+        {% for date in dates %}
+            <li><a href="#">{{ date.record }}</a></li>
+        {% endfor %}
+        </ul>
+{% endif %}
 {% endblock %}
 
 {% block body2 %}

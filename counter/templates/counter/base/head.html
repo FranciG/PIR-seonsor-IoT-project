@@ -1,10 +1,12 @@
 <html>
     {% block head %}
     <head>
+        {%block head-bokeh%}
             <link href="http://cdn.pydata.org/bokeh/release/bokeh-1.3.4.min.css" rel="stylesheet" type="text/css">
             <link href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.3.4.min.css" rel="stylesheet" type="text/css">
             <script src="http://cdn.pydata.org/bokeh/release/bokeh-1.3.4.min.js"></script>
             <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.3.4.min.js"></script>
+        {% endblock %}
 
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
             {% if script %}
@@ -17,6 +19,9 @@
             {%endblock%}
             {% block head3 %}
             {%endblock%}
+            {% block head-title %}
+                <title>IoT Cafeteria Counter Project</title>
+            {% endblock %}
     </head>
     {% endblock %}
     {% block nav %}
@@ -24,8 +29,8 @@
         <div class="" id="navbarNav">
             <ul id="nav" class="navbar-nav">
                     <li class="nav-item">{% block nav-index %}<a class="nav-link" href="{% url 'index' %}">Home</a>{% endblock %}</li>
-                    <li class="nav-item">{% block nav-data %}<a class="nav-link" href="{% url 'data' %}">Data</a>{% endblock %}</li>
-                    <li class="nav-item">{% block nav-stream %}<a class="nav-link" href="{% url 'stream' %}">Stream</a>{% endblock %}</li>
+                    <li class="nav-item">{% block nav-data %}<a class="nav-link" href="{% url 'data' %}">Data analysis basics</a>{% endblock %}</li>
+                    <li class="nav-item">{% block nav-stream %}<a class="nav-link" href="http://172.20.240.121/chart1.php">Data Analysis Bar chart</a>{% endblock %}</li>
             </ul>
         </div>
     </nav>
