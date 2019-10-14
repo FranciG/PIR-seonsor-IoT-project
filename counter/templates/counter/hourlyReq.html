@@ -1,0 +1,14 @@
+
+{% extends "./data.html" %}
+
+{% block body2 %}
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'counter:hourly' %}" method="POST">
+{% csrf_token %}
+
+<label for="date">Pick a Date</label><br>
+<input type="date" name="date" id="date" value="">
+
+<input type="submit" value="OK">
+</form>
+{% endblock %}

@@ -1,11 +1,12 @@
 
 
 {% extends "./base/head.html" %}
-
-
-{% if script == False %}
-    {% block head-bokeh %} <title>script false</title> {% endblock %}
-{% endif %}
+{%block head-bokeh%}
+<link href="http://cdn.pydata.org/bokeh/release/bokeh-1.3.4.min.css" rel="stylesheet" type="text/css">
+<link href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.3.4.min.css" rel="stylesheet" type="text/css">
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-1.3.4.min.js"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.3.4.min.js"></script>
+{% endblock %}
 {% block nav-data %}<strong class="nav-active"> Data analysis basics </strong>{% endblock %}
 
 
@@ -14,17 +15,10 @@
 {% block body1 %}
 Data Analysis
 <br>
-<a href="{% url 'daily' %}">Daily</a>
+<a href="{% url 'counter:daily' %}">Daily</a>
 <br>
-<a href="{% url 'hourly' %}">Hourly</a>
+<a href="{% url 'counter:hourlyReq' %}">Pick A Date</a>
 <br>
-{% if dates%}
-        <ul>
-        {% for date in dates %}
-            <li><a href="#">{{ date.record }}</a></li>
-        {% endfor %}
-        </ul>
-{% endif %}
 {% endblock %}
 
 {% block body2 %}
@@ -32,8 +26,9 @@ Data Analysis
         {{div|safe}}
     {% endif %}
 {% endblock %}
+
 {% block body3 %}
-    {% if sample %}
-        {{sample|safe}}
+    {% if div2 %}
+        {{div2|safe}}
     {% endif %}
 {% endblock %}
