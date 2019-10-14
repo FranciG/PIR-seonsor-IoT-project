@@ -11,6 +11,9 @@ import pandas as pd
 import io
 from bokeh.embed import components
 from bokeh.plotting import figure, output_file, show
+from bokeh.models.formatters import DatetimeTickFormatter
+from bokeh.models import HoverTool
+
 from datetime import datetime
 
 class IndexView():
@@ -44,6 +47,15 @@ class DataView():
         plot = figure(title="Daily", x_axis_label="Date",x_axis_type="datetime", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
         
         plot.line(x,y,line_width=2)
+
+        cr = plot.circle(x, y, size=20,
+                fill_color="grey", hover_fill_color="firebrick",
+                fill_alpha=0.4, hover_alpha=0.3,
+                line_color="blue", hover_line_color="white")
+        plot.add_tools(HoverTool(tooltips=[
+            ("counter", "$y{int}"),
+            ("date", "@x{%m/%d}"),
+        ],formatters={'x': 'datetime'}, renderers=[cr], mode='hline'))
         
         script,div = components(plot)
 
@@ -52,16 +64,50 @@ class DataView():
     def every10Min(df, selectedDate):
         timeData = df.groupby([pd.Grouper(key='record',freq='10min'), df.passed]).size().reset_index(name='10MinCount')
         timeData['date'] = timeData.record.dt.strftime('%y-%m-%d')
-        picked = str(selectedDate.year) + "-" + str(selectedDate.month) + "-" + str(selectedDate.day)
+
+        selectedYr = str(selectedDate.year)[2:]
+
+        if selectedDate.month<10:
+            selectedMon = "0" + str(selectedDate.month)
+        else:
+            selectedMon = str(selectedDate.month)
+
+        if selectedDate.day < 10:
+            selectedDy = "0" + str(selectedDate.day)
+        else:
+            selectedDy = str(selectedDate.day)
+
+
+        picked = selectedYr + "-" + selectedMon + "-" + selectedDy
         hoursArray = timeData[(timeData['date'] == picked)].record.dt.strftime('%H:%M')
         counts = timeData[(timeData['date'] == picked)]['10MinCount']
 
-        x = hoursArray
+        minArray = []
+
+        for min in hoursArray:
+            minArray.append(datetime.strptime(min,"%H:%M"))
+
+        x = minArray
         y = counts
-        
-        plot = figure(title="Counts per Every 10 min", x_axis_label="Time / Hr:Min", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
-        
-        plot.line(x,y,line_width=2)
+
+        chartTitle = "Counts per Every 10 min"
+        data = dict(counts=counts,time=hoursArray)
+
+        plot = figure(title=chartTitle, x_axis_label="Time / Hr:Min", y_axis_label="Number of Counts",plot_width=600,plot_height=600)
+
+        plot.line(x, y, line_dash="4 4", line_width=1, color='gray')
+
+        plot.xaxis.formatter = DatetimeTickFormatter(days="%d-%b-%Y %H:%M:%S")
+
+        cr = plot.circle(x, y, size=20,
+                        fill_color="grey", hover_fill_color="firebrick",
+                        fill_alpha=0.4, hover_alpha=0.3,
+                        line_color="red", hover_line_color="white")
+        plot.add_tools(HoverTool(tooltips=[
+            ("counter", "$y"),
+            ("time", "@x{%H:%M}"),
+        ],formatters={'x': 'datetime'}, renderers=[cr], mode='hline'))
+
         return components(plot)
     
     def hourly(request):
@@ -94,7 +140,7 @@ class DataView():
 
         chartTitle = dt.record.dt.strftime('%d-%m-%y').unique()[0] + " Hourly"
 
-        plot = figure(title=chartTitle, x_axis_label="Hour", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
+        plot = figure(title=chartTitle, x_axis_label="Time", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
 
         plot.line(x,y,line_width=2)
 
