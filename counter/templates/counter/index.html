@@ -2,21 +2,31 @@
 {% extends "./base/head.html" %}
 
 
+{% load static %}
+
+{% block head1 %}
+<link rel="stylesheet" type="text/css" href="{% static 'counter/style.css' %}">
+{% endblock %}
+
+
+
 {% block nav-index %}<strong class="nav-active">Home</strong>{% endblock %}
 
 {% block body1 %}
 
-<h3>IoT project campus cafeteria people counter</h3>
+<h3 class="be-center">IoT project campus cafeteria people counter</h3>
 
 
 {% endblock %}
 
 {% block body2 %}
-
-Current Web of Kotkanpoika<br>
-Opening hours Kotkanpoika open<br>
-mon - thu  8.45 - 14.30, fri 8.45 - 13.00<br>
-<img style="-webkit-user-select: none;margin: auto;" src="http://172.20.248.130:8081/" width="477" height="357">
+<div class="be-center">
+    <p>Opening hours of Kotkanpoika cafeteria</p>
+    <p>(mon - thu) // 8.45 - 14.30, (fri) // 8.45 - 13.00</p>
+    <br>
+    <h2>Streaming of Kotkanpoika cafeteria</h2>
+    <img style="-webkit-user-select: none;margin: auto;" src="http://172.20.248.130:8081/" width="477" height="357">
+</div>
 
 
 {% endblock %}

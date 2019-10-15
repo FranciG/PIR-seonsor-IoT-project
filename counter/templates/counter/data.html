@@ -8,21 +8,43 @@
 <script src="http://cdn.pydata.org/bokeh/release/bokeh-1.3.4.min.js"></script>
 <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.3.4.min.js"></script>
 {% endblock %}
+
+{% load static %}
+
+{% block head1 %}
+<link rel="stylesheet" type="text/css" href="{% static 'counter/style.css' %}">
+{% endblock %}
+
 {% block nav-data %}<strong class="nav-active"> Data analysis basics </strong>{% endblock %}
+
 
 
 {% include "./base/footer.html" %}
 
 {% block body1 %}
-Data Analysis
-<br>
-<a href="{% url 'counter:daily' %}">Daily</a>
-<br>
-<a href="{% url 'counter:hourlyReq' %}">Hourly</a>
+<div class="be-center">
+    <p>Data Analysis Visualization</p>
+
+    <a href="{% url 'counter:monthly' %}"><button class="btn btn-info">Monthly</button></a>
+
+    <a href="{% url 'counter:daily' %}"><button class="btn btn-success">Daily</button></a>
+
+    <a href="{% url 'counter:hourlyReq' %}"><button class="btn btn-primary">Hourly</button></a>
+</div>
 {% endblock %}
 
 {% block body2 %}
     {% if div %}
+    <div class="be-center">
         {{div|safe}}
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block body3 %}
+    {% if div2 %}
+    <div class="be-center">
+        {{div2|safe}}
+    </div>
     {% endif %}
 {% endblock %}

@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.IndexView.show, name='index'),
     path('data/', views.DataView.show, name='data'),
     path('data/daily', views.DataView.daily, name='daily'),
+    path('data/monthly', views.DataView.monthly, name='monthly'),
     path('data/hourly', views.DataView.hourly, name='hourly'),
     path('data/hourlyReq', views.DataView.hourlyReq, name='hourlyReq'),
 ]

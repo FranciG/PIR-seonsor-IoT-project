@@ -1,0 +1,14 @@
+.space-left-bit {
+    margin-left: 10em;
+    padding-left: 10em;
+}
+
+.be-center {
+    text-align: center;
+    align-content: center;
+}
+
+.warning {
+    font-family: 'Times New Roman', Times, serif;
+    color: red;
+}

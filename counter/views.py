@@ -13,6 +13,7 @@ from bokeh.embed import components
 from bokeh.plotting import figure, output_file, show
 from bokeh.models.formatters import DatetimeTickFormatter
 from bokeh.models import HoverTool
+from bokeh.models import ColumnDataSource
 
 from datetime import datetime
 
@@ -31,6 +32,8 @@ class DataView():
         template_name = 'counter/data.html'
 
         data = list(Counter.objects.all().values())
+
+        dt = DataHandler.more_field(data)
 
         df = pd.DataFrame(data)
 
@@ -56,6 +59,40 @@ class DataView():
             ("counter", "$y{int}"),
             ("date", "@x{%m/%d}"),
         ],formatters={'x': 'datetime'}, renderers=[cr], mode='hline'))
+        
+        script,div = components(plot)
+        script2,div2 = DataView.everyDay(dt)
+
+        contents = {'script':script, 'div':div, 'script2': script2, 'div2':div2}
+
+        return render_to_response(template_name, contents)
+
+    def monthly(request):
+        template_name = 'counter/data.html'
+
+        data = DataHandler.get_mysql_data()
+
+        df = DataHandler.more_field(data)
+
+        timeData = df.groupby([pd.Grouper(key='record',freq='m'), df.passed]).size().reset_index(name='monthlyCount')
+
+        y = timeData["monthlyCount"]
+        
+        x = df["month"].unique()
+
+        plot = figure(title="Monthly", y_range=x, x_axis_label="Date",x_axis_type="datetime", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
+        
+        plot.line(x,y,line_width=2)
+
+        cr = plot.hbar(y=x, height=0.2, left=0,
+          right=y, color="navy", hover_fill_color="firebrick",
+          hover_alpha=0.3, hover_line_color="white")
+
+        plot.add_tools(HoverTool(tooltips=[
+            ("counter", "$x{int}"),
+            ("month", "@y{int}"),
+        ],
+        renderers=[cr], mode='hline'))
         
         script,div = components(plot)
 
@@ -109,11 +146,69 @@ class DataView():
         ],formatters={'x': 'datetime'}, renderers=[cr], mode='hline'))
 
         return components(plot)
+
+    def weekData(data, hrArray):
+        hourlyCount = []
+        for hr in hrArray:
+            count = data[(data.hour == hr)]['passed'].count()
+            hourlyCount.append(count)
+        return hourlyCount
+    def everyDay(df):
+        
+        lastweek = datetime.now().isocalendar()[1] -1 
+
+        mon = df[(df.weekNumber == lastweek) &(df.weekday == 0)]
+        tue = df[(df.weekNumber == lastweek) &(df.weekday == 1)]
+        wed = df[(df.weekNumber == lastweek) &(df.weekday == 2)]
+        thu = df[(df.weekNumber == lastweek) &(df.weekday == 3)]
+        fri = df[(df.weekNumber == lastweek) &(df.weekday == 4)]
+
+
+        xArray = []
+        monHrArray = mon['hour'].unique()
+        xArray.append(monHrArray)
+        tueHrArray = tue['hour'].unique()
+        xArray.append(tueHrArray)
+        wedHrArray = wed['hour'].unique()
+        xArray.append(wedHrArray)
+        thuHrArray = thu['hour'].unique()
+        xArray.append(thuHrArray)
+        friHrArray = fri['hour'].unique()
+        xArray.append(friHrArray)
+        yArray = []
+        monHourlyCount = DataView.weekData(mon, monHrArray)
+        yArray.append(monHourlyCount)
+        tueHourlyCount = DataView.weekData(tue, tueHrArray)
+        yArray.append(tueHourlyCount)
+        wedHourlyCount = DataView.weekData(wed, wedHrArray)
+        yArray.append(wedHourlyCount)
+        thuHourlyCount = DataView.weekData(thu, thuHrArray)
+        yArray.append(thuHourlyCount)
+        friHourlyCount = DataView.weekData(fri, friHrArray)
+        yArray.append(friHourlyCount)
+
+
+        mulData = {'xs': xArray,
+                'ys': yArray,
+                'legends': ['Monday', 'Tuesday', 'Wednesday','Thursday','Friday'],
+                'colors': ['red', 'green', 'blue','purple','black']}
+
+        source = ColumnDataSource(mulData)
+
+        p = figure(title="Counts per day", x_axis_label='Time', y_axis_label='counts')
+
+        cr = p.multi_line(xs='xs', ys='ys', legend='legends', color='colors', source=source)
+
+        p.add_tools(HoverTool(tooltips=[
+            ("time", "$x{int}"),
+            ("counter", "$y{int}"),
+            ],
+            renderers=[cr], mode='hline'))
+
+        return components(p)
     
     def hourly(request):
         template_name = 'counter/hourly.html'
-
-        # df = DataView.get_data()
 
         selectedDate = '2019-10-09 00:00:00'
 
@@ -127,6 +222,11 @@ class DataView():
         df = DataHandler.more_field(data)
 
         dt = df[(df['year']==int(selectedDate.year) ) & (df['month']== int(selectedDate.month) ) & (df['day']== int(selectedDate.day) )]
+
+        if(len(dt)==0):
+            err = "Sorry, There is no any available data on selected date"
+            contents = {'err':err}
+            return render_to_response(template_name, contents)
 
         hrArray = dt['hour'].unique()
         hourlyCount = []
@@ -156,15 +256,6 @@ class DataView():
         template_name = 'counter/hourlyReq.html'
         return render(request, template_name)
 
-
-    def get_data():
-        data = list(Counter.objects.all().values())
-
-        df = pd.DataFrame(data)
-    
-        return df
-
-
 class DataHandler():
     def get_mysql_data():
         data = list(Counter.objects.all().values())
@@ -184,6 +275,8 @@ class DataHandler():
         df['day'] = df['record'].apply(lambda x: x.day)
         df['month'] = df['record'].apply(lambda x: x.month)
         df['year'] = df['record'].apply(lambda x: x.year)
+        df['weekday'] = df['record'].dt.weekday.apply(lambda x: x )
+        df['weekNumber'] = df['record'].dt.week.apply(lambda x: x )
         # df['date'] = df['record'].apply(lambda x: (x.day,x.month,x.year) )
         return df
 

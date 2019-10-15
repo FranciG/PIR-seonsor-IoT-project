@@ -1,29 +1,17 @@
 
 
-{% extends "./base/head.html" %}
-{%block head-bokeh%}
-<link href="http://cdn.pydata.org/bokeh/release/bokeh-1.3.4.min.css" rel="stylesheet" type="text/css">
-<link href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.3.4.min.css" rel="stylesheet" type="text/css">
-<script src="http://cdn.pydata.org/bokeh/release/bokeh-1.3.4.min.js"></script>
-<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.3.4.min.js"></script>
-{% endblock %}
-{% block nav-data %}<strong class="nav-active"> Data analysis basics </strong>{% endblock %}
-
+{% extends "./data.html" %}
 
 {% include "./base/footer.html" %}
 
-{% block body1 %}
-Data Analysis
-<br>
-<a href="{% url 'counter:daily' %}">Daily</a>
-<br>
-<a href="{% url 'counter:hourlyReq' %}">Pick A Date</a>
-<br>
-{% endblock %}
-
-{% block body2 %}
+{% block body2 %}   
     {% if div %}
         {{div|safe}}
+    {% endif %}
+    {% if err %}
+        <div class="err warning be-center">
+            {{err|safe}}
+        </div>
     {% endif %}
 {% endblock %}
 
