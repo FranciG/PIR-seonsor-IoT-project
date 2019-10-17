@@ -25,26 +25,48 @@
 <div class="be-center">
     <p>Data Analysis Visualization</p>
 
-    <a href="{% url 'counter:monthly' %}"><button class="btn btn-info">Monthly</button></a>
+    <a href="{% url 'counter:monthly' %}"><button class="btn btn-warning">Monthly</button></a>
 
     <a href="{% url 'counter:daily' %}"><button class="btn btn-success">Daily</button></a>
 
     <a href="{% url 'counter:hourlyReq' %}"><button class="btn btn-primary">Hourly</button></a>
+
+    <a href="{% url 'counter:lunchTime' %}"><button class="btn btn-secondary">Lunch Time</button></a>
 </div>
 {% endblock %}
 
-{% block body2 %}
-    {% if div %}
-    <div class="be-center">
-        {{div|safe}}
-    </div>
-    {% endif %}
-{% endblock %}
+<div class="row">
+    {% block body2 %}
+        {% if div %}
+            <div class="col d-flex justify-content-center">
+                {{div|safe}}
+            </div>
+        {% endif %}
+        <div class="col d-flex justify-content-center">
+            {% if dailyAvg %}
+                <p>
+                    <span class="badge badge-info">Average&nbsp;</span> {{dailyAvg|safe}}&nbsp;
+                </p>
+            {% endif %}
+            {% if dailyMax %}
+                <P>
+                    <span class="badge badge-success">Max&nbsp;</span> {{dailyMax|safe}}&nbsp;
+                </P>
+            {% endif %}
+            {% if dailyMin %}
+                <p>
+                    <span class="badge badge-warning">Min&nbsp;</span> {{dailyMin|safe}}&nbsp;
+                </p>
+            {% endif %}
+        </div>
+    {% endblock %}
+</div>
 
-{% block body3 %}
-    {% if div2 %}
-    <div class="be-center">
-        {{div2|safe}}
-    </div>
-    {% endif %}
-{% endblock %}
+    
+    {% block body3 %}
+        {% if div2 %}
+            <div class="row d-flex justify-content-center">
+                {{div2|safe}}
+            </div>
+        {% endif %}
+    {% endblock %}

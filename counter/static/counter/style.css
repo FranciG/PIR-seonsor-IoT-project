@@ -12,3 +12,14 @@
     font-family: 'Times New Roman', Times, serif;
     color: red;
 }
+
+.width-max {
+    max-width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.space-top-bit p{
+    margin-top: 30px;
+    padding-top: 30px;
+}

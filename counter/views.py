@@ -16,6 +16,7 @@ from bokeh.models import HoverTool
 from bokeh.models import ColumnDataSource
 
 from datetime import datetime
+import calendar
 
 class IndexView():
     def show(request):
@@ -47,7 +48,7 @@ class DataView():
         
         x = timeData["record"]
 
-        plot = figure(title="Daily", x_axis_label="Date",x_axis_type="datetime", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
+        plot = figure(title="Daily", x_axis_label="Date",x_axis_type="datetime", y_axis_label="Number of Counts",plot_width=600,plot_height=600)
         
         plot.line(x,y,line_width=2)
 
@@ -63,7 +64,9 @@ class DataView():
         script,div = components(plot)
         script2,div2 = DataView.everyDay(dt)
 
-        contents = {'script':script, 'div':div, 'script2': script2, 'div2':div2}
+        contents = {'script':script, 'div':div, 
+        'script2': script2, 'div2':div2,
+        'dailyAvg': y.mean(), 'dailyMax': y.max(), 'dailyMin': y.min()}
 
         return render_to_response(template_name, contents)
 
@@ -78,19 +81,25 @@ class DataView():
 
         y = timeData["monthlyCount"]
         
-        x = df["month"].unique()
+        x = df["Month"].unique()
 
-        plot = figure(title="Monthly", y_range=x, x_axis_label="Date",x_axis_type="datetime", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
-        
-        plot.line(x,y,line_width=2)
+        plot = figure(title="Monthly", x_axis_label="month",x_range=x ,y_axis_label="Number of Counts",plot_width=600,plot_height=600)        
 
-        cr = plot.hbar(y=x, height=0.2, left=0,
-          right=y, color="navy", hover_fill_color="firebrick",
-          hover_alpha=0.3, hover_line_color="white")
+        cr = plot.wedge(x=x, y=y, radius=15, start_angle=0.6,
+           end_angle=4.1, radius_units="screen", color="#2b8cbe")
+
+        plot.line(x,y,line_width=3)
+    
+        plot.scatter(x,y, marker="square", fill_color="red")
+
+        # cr = plot.line(x,y,line_width=2)
+        # cr = plot.hbar(y=y, height=0.2, left=0,
+        #   x=x, color="navy", hover_fill_color="firebrick",
+        #   hover_alpha=0.3, hover_line_color="white")
 
         plot.add_tools(HoverTool(tooltips=[
-            ("counter", "$x{int}"),
-            ("month", "@y{int}"),
+            ("month", "@x"),
+            ("counter", "@y{int}"),
         ],
         renderers=[cr], mode='hline'))
         
@@ -141,7 +150,7 @@ class DataView():
                         fill_alpha=0.4, hover_alpha=0.3,
                         line_color="red", hover_line_color="white")
         plot.add_tools(HoverTool(tooltips=[
-            ("counter", "$y"),
+            ("counter", "$y{int}"),
             ("time", "@x{%H:%M}"),
         ],formatters={'x': 'datetime'}, renderers=[cr], mode='hline'))
 
@@ -202,18 +211,115 @@ class DataView():
         p.add_tools(HoverTool(tooltips=[
             ("time", "$x{int}"),
             ("counter", "$y{int}"),
+            ("date", "@legends")
             ],
             renderers=[cr], mode='hline'))
 
         return components(p)
-    
-    def hourly(request):
+    def bestTimeForLunch(request):
         template_name = 'counter/hourly.html'
 
-        selectedDate = '2019-10-09 00:00:00'
+        selectedDateStart = '11:00'
+        selectedDateEnd = '11:30'
 
         if(request.method == 'POST'):
-            selectedDate = request.POST['date'] + " 00:00:00"
+            selectedDateStart = request.POST['hr_start'] +":"+ request.POST['min_start']
+            selectedDateEnd = request.POST['hr_end'] +":"+ request.POST['min_end']
+            if(request.POST['hr_start']>request.POST['hr_end']):
+                err = "Sorry, Time setting in error, especially Hour, please take a look one more time"
+            elif(request.POST['hr_start'] == request.POST['hr_end']):
+                if(request.POST['min_start']>request.POST['min_end']):
+                    err = "Sorry, Time setting in error, especially Minutes, please take a look one more time"
+                elif(request.POST['min_start'] == request.POST['min_end']):
+                    err = "Sorry, Time setting in error, same value settings, please take a look one more time"
+            try:
+                contents = {'err':err}
+                return render_to_response(template_name, contents)
+            except NameError:
+                print(NameError)
+
+        selectedDateStart = str(datetime.now().year)+"-"+str(datetime.now().month)+"-"+str(datetime.now().day)+" "+selectedDateStart+":00"
+        selectedDateEnd = str(datetime.now().year)+"-"+str(datetime.now().month)+"-"+str(datetime.now().day)+" "+selectedDateEnd+":00"
+
+
+        selectedDay = datetime.now().weekday()
+
+        day = DataHandler.getDay(selectedDay)
+
+        data = DataHandler.get_mysql_data()
+
+        df = DataHandler.more_field(data)
+
+        timeData = df[(df.weekday==selectedDay)].groupby([pd.Grouper(key='record',freq='10min'), df.passed, df.weekday, df.weekNumber]).size().reset_index(name='10MinCount')
+        timeData['date'] = timeData.record.dt.strftime('%y-%m-%d')
+        timeData['time'] = timeData.record.dt.strftime('%H:%M')
+
+        if(len(timeData)==0):
+            err = "Sorry, There is no any available data on selected date"
+            contents = {'err':err}
+            return render_to_response(template_name, contents)
+
+        hoursArray = timeData.record.dt.strftime('%H:%M')
+
+        fromTime = "2019-10-09 11:00:00"
+        toTime = "2019-10-09 11:30:00"
+
+        if selectedDateStart and selectedDateEnd:
+            fromTime = selectedDateStart
+            toTime = selectedDateEnd
+
+        fromAsTime = datetime.strptime(fromTime, '%Y-%m-%d %H:%M:%S')
+        toAsTime = datetime.strptime(toTime, '%Y-%m-%d %H:%M:%S')
+
+        fromTime = fromAsTime.strftime('%H:%M')
+        toTime = toAsTime.strftime('%H:%M')
+
+        range = str(fromTime) + " - " + str(toTime)
+
+        avgPer10Min = timeData.groupby('time', as_index=False)['10MinCount'].mean()
+
+        minAvg, bestTime = 99999999,0
+        x, y = [], []
+
+        for index, row in avgPer10Min.iterrows():
+            if row.time > fromTime and row.time < toTime:
+                x.append(row.time)
+                y.append(row["10MinCount"])
+                if row["10MinCount"]<minAvg:
+                    minAvg = row["10MinCount"]
+                    bestTime = row.time
+        
+        chartTitle = str(range) +" " + str(day) + ", Average Counts"
+
+        plot = figure(title=chartTitle, x_range = x, x_axis_label="Time / Hr:Min", y_axis_label="Number of Counts",plot_width=600,plot_height=600)
+
+        plot.line(x,y,line_width=2)
+
+        cr = plot.circle(x, y, size=20,
+        fill_color="grey", hover_fill_color="firebrick",
+        fill_alpha=0.4, hover_alpha=0.3,
+        line_color="red", hover_line_color="white")
+        plot.add_tools(HoverTool(tooltips=[
+            ("counter", "$y{int}"),
+            ("time", "@x"),
+        ], renderers=[cr], mode='hline'))
+
+
+        script,div = components(plot)
+
+        contents = {
+            'script':script, 'div':div,
+            'range': range, 'day': day, 
+            'bestTime': bestTime, 'counts':minAvg,
+            'cam':True,}
+
+        return render_to_response(template_name, contents)
+    def hourly(request):
+        template_name = 'counter/hourly.html'
+        selectedDate = '2019-10-09'
+
+        if(request.method == 'POST'):
+            selectedDate = request.POST['date'] +" 00:00:00"
 
         selectedDate = datetime.strptime(selectedDate, "%Y-%m-%d %H:%M:%S")
         
@@ -255,6 +361,9 @@ class DataView():
     def hourlyReq(request):
         template_name = 'counter/hourlyReq.html'
         return render(request, template_name)
+    def lunchTime(request):
+        template_name = 'counter/lunchTime.html'
+        return render(request, template_name)
 
 class DataHandler():
     def get_mysql_data():
@@ -277,7 +386,24 @@ class DataHandler():
         df['year'] = df['record'].apply(lambda x: x.year)
         df['weekday'] = df['record'].dt.weekday.apply(lambda x: x )
         df['weekNumber'] = df['record'].dt.week.apply(lambda x: x )
+        df['Month'] = df['month'].apply(lambda x: calendar.month_abbr[x])
         # df['date'] = df['record'].apply(lambda x: (x.day,x.month,x.year) )
         return df
+
+    def getDay(weekday):
+        if weekday == 0:
+            return "Monday"
+        elif weekday == 1:
+            return "Tuesday"
+        elif weekday == 2:
+            return "Wednesday"
+        elif weekday == 3:
+            return "Thursday"
+        elif weekday == 4:
+            return "Friday"
+        elif weekday == 5:
+            return "Saturday"
+        elif weekday == 6:
+            return "Sunday"
 
 

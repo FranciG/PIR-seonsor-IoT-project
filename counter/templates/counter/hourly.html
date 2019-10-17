@@ -6,7 +6,9 @@
 
 {% block body2 %}   
     {% if div %}
+    <div class="row d-flex justify-content-center">
         {{div|safe}}
+    </div>
     {% endif %}
     {% if err %}
         <div class="err warning be-center">
@@ -17,6 +19,48 @@
 
 {% block body3 %}
     {% if div2 %}
-        {{div2|safe}}
+        <div class="row d-flex justify-content-center">
+            {{div2|safe}}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body4 %}
+    {% if bestTime %}
+        <div class="row d-flex justify-content-center">
+            <p>
+                If Do not want to wait, or hate crowded recommend to go at&nbsp;
+            </p>
+            <h2>
+                <span class="badge badge-danger">
+                    {{bestTime|safe}}
+                </span>
+            </h2>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="row ">
+                <p>
+                    Average count  from {{bestTime|safe}} to after 10 min is&nbsp;
+                    <h2>
+                        <span class="badge badge-warning">
+                            {{counts|safe}}
+                        </span>
+                    </h2>
+                </p>
+                <p>
+                    &nbsp;
+                    ,For the
+                    {{day|safe}},
+                    {{range|safe}}
+                </p>            
+            </div>
+        </div>
+    {% endif %}
+    {% if cam %}
+        {%if cam == True%}
+            <div class="row d-flex justify-content-center">
+                    <img style="-webkit-user-select: none;margin: auto;" src="http://172.20.248.130:8081/" width="477" height="357">
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}

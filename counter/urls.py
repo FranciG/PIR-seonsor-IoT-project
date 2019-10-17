@@ -10,5 +10,7 @@ urlpatterns = [
     path('data/daily', views.DataView.daily, name='daily'),
     path('data/monthly', views.DataView.monthly, name='monthly'),
     path('data/hourly', views.DataView.hourly, name='hourly'),
+    path('data/hourly/bestTimeForLunch', views.DataView.bestTimeForLunch, name='bestTimeForLunch'),
     path('data/hourlyReq', views.DataView.hourlyReq, name='hourlyReq'),
+    path('data/lunchTime', views.DataView.lunchTime, name='lunchTime'),
 ]
