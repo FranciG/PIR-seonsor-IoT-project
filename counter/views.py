@@ -282,7 +282,7 @@ class DataView():
         x, y = [], []
 
         for index, row in avgPer10Min.iterrows():
-            if row.time > fromTime and row.time < toTime:
+            if row.time >= fromTime and row.time < toTime:
                 x.append(row.time)
                 y.append(row["10MinCount"])
                 if row["10MinCount"]<minAvg:
