@@ -139,7 +139,7 @@ class DataView():
         chartTitle = "Counts per Every 10 min"
         data = dict(counts=counts,time=hoursArray)
 
-        plot = figure(title=chartTitle, x_axis_label="Time / Hr:Min", y_axis_label="Number of Counts",plot_width=600,plot_height=600)
+        plot = figure(title=chartTitle, x_axis_label="Time / (Hr:Min)", y_axis_label="Number of Counts",plot_width=600,plot_height=600)
 
         plot.line(x, y, line_dash="4 4", line_width=1, color='gray')
 
@@ -204,7 +204,7 @@ class DataView():
 
         source = ColumnDataSource(mulData)
 
-        p = figure(title="Counts per day", x_axis_label='Time', y_axis_label='counts')
+        p = figure(title="Counts per week days", x_axis_label='Time', y_axis_label='counts')
 
         cr = p.multi_line(xs='xs', ys='ys', legend='legends', color='colors', source=source)
 
@@ -291,7 +291,7 @@ class DataView():
         
         chartTitle = str(range) +" " + str(day) + ", Average Counts"
 
-        plot = figure(title=chartTitle, x_range = x, x_axis_label="Time / Hr:Min", y_axis_label="Number of Counts",plot_width=600,plot_height=600)
+        plot = figure(title=chartTitle, x_range = x, x_axis_label="Time / Hr:Min", y_axis_label="Average of Counts",plot_width=600,plot_height=600)
 
         plot.line(x,y,line_width=2)
 
@@ -346,7 +346,7 @@ class DataView():
 
         chartTitle = dt.record.dt.strftime('%d-%m-%y').unique()[0] + " Hourly"
 
-        plot = figure(title=chartTitle, x_axis_label="Time", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
+        plot = figure(title=chartTitle, x_axis_label="Time / Hr", y_axis_label="Number of Counts",plot_width=400,plot_height=400)
 
         plot.line(x,y,line_width=2)
 
