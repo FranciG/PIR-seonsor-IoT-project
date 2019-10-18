@@ -19,7 +19,7 @@ def get_distance():
 #    GPIO.output(PIN_TRIGGER, GPIO.LOW)
     GPIO.output(PIN_TRIGGER, True)
 #    time.sleep(0.00001)
-    time.sleep(0.001)
+    time.sleep(0.01)
     GPIO.output(PIN_TRIGGER, False)
 
     while GPIO.input(PIN_ECHO)==0:

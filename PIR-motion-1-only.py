@@ -3,7 +3,7 @@ import time
 
 from time import gmtime, strftime
 
-PIR = 36
+PIR = 40
 
 GPIO.setwarnings(True)
 GPIO.setmode(GPIO.BOARD)
